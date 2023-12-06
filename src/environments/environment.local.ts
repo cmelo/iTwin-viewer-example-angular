@@ -6,8 +6,8 @@
 export const environment = {
   production: false,
   authorization: {
-    clientId: "",
-    scope: "imodelaccess:read imodels:read realitydata:read",
+    clientId: "spa-cb0c17AHQIPCvMv7oC7bTgAj3",
+    scope: "itwins:read projects:read itwins:modify projects:modify users:read sensor-data:read sensor-data:modify savedviews:modify imodels:modify storage:modify storage:read savedviews:read library:modify realitydata:read library:read imodels:read realitydata:modify",
     redirectUri: "http://localhost:3000",
     postSignoutRedirectUri: "http://localhost:3000",
     responseType: "code",

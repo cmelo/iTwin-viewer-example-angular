@@ -6,8 +6,8 @@ import { environment } from 'src/environments/environment';
 
 import { Injectable } from '@angular/core';
 import {
-    BrowserAuthorizationCallbackHandler, BrowserAuthorizationClient,
-    BrowserAuthorizationClientConfiguration
+    BrowserAuthorizationClient,
+    BrowserAuthorizationClientConfiguration,
 } from '@itwin/browser-authorization';
 
 @Injectable({
@@ -23,9 +23,7 @@ export class AuthorizationService {
   }
 
   public async signIn() {
-    await BrowserAuthorizationCallbackHandler.handleSigninCallback(
-      this._config.redirectUri
-    );
+    await this._client.handleSigninCallback();
     return new Promise<boolean>((resolve, reject) => {
       this._client.onAccessTokenChanged.addOnce((token: string) => resolve(token !== ""));
       this._client.signIn().catch((err) => reject(err));

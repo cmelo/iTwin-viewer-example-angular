@@ -4,7 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 import { environment } from 'src/environments/environment';
 
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { assert } from '@itwin/core-bentley';
 import {
     BentleyCloudRpcManager, IModelReadRpcInterface, IModelTileRpcInterface
@@ -17,6 +18,7 @@ import { AuthorizationService } from '@shared/services/authorization.service';
 
 import { SelectionLoggerService } from './services/selection-logger.service';
 import { ToolsService } from './services/tools.service';
+import { from, switchMap } from 'rxjs';
 
 import type { ViewportProps } from '@shared/types/viewport-props';
 
@@ -30,11 +32,16 @@ export class ViewerComponent implements OnInit {
   public initialized = false;
   public viewportId = "myFirstViewportId"
 
+  public me$ = from(this.authService.signIn()).pipe(
+    switchMap(() => this._http.get('https://api.bentley.com/users/me')),
+  );
+
   constructor(
     private toolsService: ToolsService,
     private selectionLoggerService: SelectionLoggerService,
-    private authService: AuthorizationService
-  ) { }
+    private authService: AuthorizationService,
+    private _http: HttpClient,
+  ) {}
 
   ngOnInit() {
     this._initialize();
@@ -42,12 +49,14 @@ export class ViewerComponent implements OnInit {
 
   /** initialize iTwin services */
   private async _initialize() {
+    console.log('init');
     if (!this.authService.signedIn) {
       await this.authService.signIn();
     }
     // for development purposes only
     assert(this.authService.signedIn, "User must sign in before initializing IModelApp");
     // IModelApp.startup must be called before loading any imodel or viewport
+    console.log('before startup');
     await IModelApp.startup({
       authorizationClient: this.authService.client,
       hubAccess: new FrontendIModelsAccess(new IModelsClient()),
@@ -59,6 +68,7 @@ export class ViewerComponent implements OnInit {
         },
       },
     });
+    console.log('after startup');
     BentleyCloudRpcManager.initializeClient(
       {
         uriPrefix: "https://api.bentley.com",
@@ -67,6 +77,7 @@ export class ViewerComponent implements OnInit {
       [IModelReadRpcInterface, IModelTileRpcInterface, PresentationRpcInterface]
     );
     this.initialized = true;
+    console.log('client initialized');
   }
 
   /**

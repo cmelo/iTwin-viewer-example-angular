@@ -18,11 +18,8 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "customWebpackConfig": {
-              "path": "./extra-webpack.config.ts"
-            },
             "allowedCommonJsDependencies": [
               "@itwin/imodels-access-frontend",
               "@itwin/imodels-client-management",
@@ -35,7 +32,9 @@
             "outputPath": "dist/viewer-sample-angular",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -74,7 +73,6 @@
             "development": {
               "verbose": true,
               "statsJson": true,
-              "showCircularDependencies": true,
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -92,28 +90,31 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "viewer-sample-angular:build:production"
+              "buildTarget": "viewer-sample-angular:build:production"
             },
             "development": {
-              "browserTarget": "viewer-sample-angular:build:development"
+              "buildTarget": "viewer-sample-angular:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-builders/custom-webpack:extract-i18n",
+          "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "viewer-sample-angular:build"
+            "buildTarget": "viewer-sample-angular:build"
           }
         },
         "test": {
-          "builder": "@angular-builders/custom-webpack:karma",
+          "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
@@ -138,8 +139,9 @@
       }
     }
   },
-  "defaultProject": "viewer-sample-angular",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
