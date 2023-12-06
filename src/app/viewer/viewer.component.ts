@@ -35,6 +35,11 @@ export class ViewerComponent implements OnInit {
   public me$ = from(this.authService.signIn()).pipe(
     switchMap(() => this._http.get('https://api.bentley.com/users/me')),
   );
+  public itwins$ = from(this.authService.signIn()).pipe(
+    switchMap(() => this._http.get('https://api.bentley.com/itwins/myprimaryaccount')),
+  );
+
+
 
   constructor(
     private toolsService: ToolsService,
