@@ -49,6 +49,11 @@ export class ViewerComponent implements OnInit {
       }}
     ))
   )
+   public members$ = this.signed$.pipe(
+    switchMap(() => this._http.get('https://api.bentley.com/accesscontrol/itwins/e46adc53-d9d4-45d6-a852-b437a84a945e/members')),
+    shareReplay(1),
+  );
+
 
 
 
