@@ -13,8 +13,8 @@ export const environment = {
     responseType: "code",
     authority: "https://ims.bentley.com"
   },
-  iTwinId: "",
-  iModelId: "",
+  iTwinId: "0e123236-4f56-4035-a34e-995006b6cf17",
+  iModelId: "edc9ec34-be2c-406a-8035-1744550fa9c9",
   map: {
     bingKey: ""
   }

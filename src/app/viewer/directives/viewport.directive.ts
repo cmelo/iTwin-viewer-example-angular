@@ -11,6 +11,7 @@ import {
 } from '@itwin/core-frontend';
 
 import type { ViewportProps } from '@shared/types/viewport-props';
+import { AuthorizationService } from '@shared/services/authorization.service';
 /**
  * The Viewport Directive attaches a iTwinjs viewport to a `<div>`.
  * IModelApp.startup() must be called before a viewport is initialized.  
@@ -37,7 +38,10 @@ export class ViewportDirective implements OnInit {
   private _viewportDiv: HTMLDivElement;
   public _iModelConnection: IModelConnection | undefined;
 
-  constructor(elem: ElementRef) {
+  constructor(
+    elem: ElementRef,
+    private authService: AuthorizationService,
+  ) {
     this._viewportDiv = elem.nativeElement;
   }
 
@@ -50,15 +54,21 @@ export class ViewportDirective implements OnInit {
   }
 
   private async _createViewport(iTwinId: string, iModelId: string) {
+
+    // if (!this.authService.signedIn) {
+    //   await this.authService.signIn();
+    // }
     // for development purposes only (to illustrate requirements)
     assert(IModelApp.initialized, "IModelApp.startup() must be called before a viewport can be initialized");
     assert(!!iTwinId, "No iTwinId provided.");
     assert(!!iModelId, "No iModelId provided.");
   
+    console.log('model connection');
     const iModelConnection = await CheckpointConnection.openRemote(
       iTwinId,
       iModelId,
     );
+    console.log('mmm', iModelConnection);
     if (iModelConnection && this._viewportDiv) {
       // obtain a viewState for the model and add it to a Viewport within the container
       const viewCreator = new ViewCreator3d(iModelConnection);

@@ -18,7 +18,7 @@ import { AuthorizationService } from '@shared/services/authorization.service';
 
 import { SelectionLoggerService } from './services/selection-logger.service';
 import { ToolsService } from './services/tools.service';
-import { from, switchMap } from 'rxjs';
+import { from, shareReplay, switchMap } from 'rxjs';
 
 import type { ViewportProps } from '@shared/types/viewport-props';
 
@@ -32,12 +32,24 @@ export class ViewerComponent implements OnInit {
   public initialized = false;
   public viewportId = "myFirstViewportId"
 
-  public me$ = from(this.authService.signIn()).pipe(
+  public signed$ = from(this.authService.signIn()).pipe(shareReplay(1));
+  public me$ = this.signed$.pipe(
     switchMap(() => this._http.get('https://api.bentley.com/users/me')),
+    shareReplay(1),
   );
-  public itwins$ = from(this.authService.signIn()).pipe(
+   public itwins$ = this.signed$.pipe(
     switchMap(() => this._http.get('https://api.bentley.com/itwins/myprimaryaccount')),
+    shareReplay(1),
   );
+  public model$ = this.itwins$.pipe(
+    switchMap((resp: any) => this._http.get(
+      `https://api.bentley.com/imodels/`, {params: {
+        iTwinId: resp.iTwin.id,
+        projectId: 'e46adc53-d9d4-45d6-a852-b437a84a945e'
+      }}
+    ))
+  )
+
 
 
 
